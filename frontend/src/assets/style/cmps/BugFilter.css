@@ -1,0 +1,11 @@
+.bug-filter {
+  display: flex;
+  gap: 1em;
+  margin-bottom: 1em;
+}
+
+.bug-filter input {
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid #888;
+}
