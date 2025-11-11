@@ -11,6 +11,7 @@ import autoTable from 'jspdf-autotable'
 export function BugIndex() {
     const [bugs, setBugs] = useState([])
     const [filterBy, setFilterBy] = useState({ txt: '', minSeverity: 0 })
+    const [viewedCount, setViewedCount] = useState(0)
     const [viewedBugs, setViewedBugs] = useState(0)
     const maxViews = 3
 
@@ -21,6 +22,21 @@ export function BugIndex() {
     useEffect(() => {
         loadCount()
     }, [])
+    
+useEffect(() => {
+  async function loadViewedCount() {
+    try {
+      const data = await bugService.getCookieCount()
+      console.log('Cookie count:', data)
+      setViewedCount(data.count)
+    } catch (err) {
+      console.error('Failed to load viewed count', err)
+    }
+  }
+  loadViewedCount()
+}, [])
+
+
 
     async function loadBugs() {
         const allBugs = await bugService.query()
@@ -119,7 +135,7 @@ export function BugIndex() {
             <main>
                 <button onClick={onAddBug}>Add Bug ⛏</button>
                 <button onClick={downloadPDF}>Download PDF 📄</button>
-                <p>Viewed {viewedBugs} / {maxViews} bugs</p>
+                <p>Viewed {viewedCount} / 3 bugs</p>
                 <BugFilter filterBy={filterBy} onSetFilter={setFilterBy} />
                 <BugList bugs={bugs} onRemoveBug={onRemoveBug} onEditBug={onEditBug} />
             </main>

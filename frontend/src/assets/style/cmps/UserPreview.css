@@ -1,0 +1,61 @@
+.user-preview {
+    background-color: var(--clr1bg);
+    border-radius: 8px;
+    padding: 1.2em;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.user-preview h4 {
+    text-transform: capitalize;
+    color: black;
+    margin: 0.5em 0;
+    font-family: 'Poppins', sans-serif;
+    font-style: italic;
+    font-weight: 600;
+}
+
+.user-preview p {
+    margin: 0.2em 0;
+    font-size: 0.95em;
+}
+
+.user-preview span {
+    font-weight: bold;
+    color: #333;
+}
+
+.user-preview .actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.8em;
+    margin-top: 0.8em;
+}
+
+.user-preview .details-link {
+    margin-top: 0.8em;
+}
+
+.user-preview button {
+    background-color: #e8c8d8;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s ease;
+}
+
+.user-preview button:hover {
+    background-color: #f0a8c8;
+}
+
+.user-preview a {
+    text-decoration: none;
+    color: inherit;
+    font-weight: 500;
+}

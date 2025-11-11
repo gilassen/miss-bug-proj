@@ -1,0 +1,29 @@
+.user-index {
+  padding: 20px;
+}
+
+.user-index h1 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.actions-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.actions-container button {
+  background-color: #e8c8d8;
+  color: black;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.actions-container button:hover {
+  background-color: #f0a8c8;
+}

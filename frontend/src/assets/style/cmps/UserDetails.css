@@ -1,0 +1,22 @@
+.user-details h3 {
+    color: var(--clr1);
+    font-size: 2em;
+}
+
+.user-details h4 {
+    color: var(--clr2);
+}
+
+.user-details {
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+    background-color: var(--clr1bg);
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.user-details p {
+    font-size: 1em;
+    margin: 0.4em 0;
+}

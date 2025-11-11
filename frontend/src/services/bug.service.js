@@ -25,10 +25,10 @@ async function getById(bugId) {
 async function remove(bugId) {
   const res = await fetch(BASE_URL + bugId, {
     method: 'DELETE',
-    credentials: 'include', 
+    credentials: 'include',
   })
   if (!res.ok) throw new Error('Cannot remove bug')
-  return res.json()
+  return res.text()
 }
 
 async function save(bug) {
@@ -50,11 +50,14 @@ async function save(bug) {
 }
 
 async function getCookieCount() {
-  const res = await fetch(BASE_URL + 'cookie-count', {
-    credentials: 'include',
-  })
-  console.log('📡 Fetch cookie-count status:', res.status)
-  const data = await res.json()
-  console.log('📡 cookie-count data:', data)
-  return data
+  try {
+    const res = await fetch('/api/bug/count', { credentials: 'include' })
+    if (!res.ok) throw new Error('Failed to get cookie count')
+    const data = await res.json()
+    return data
+  } catch (err) {
+    console.error('Cannot get cookie count:', err)
+    throw err
+  }
 }
+
