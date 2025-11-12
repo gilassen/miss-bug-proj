@@ -10,36 +10,43 @@ import autoTable from 'jspdf-autotable'
 
 export function BugIndex() {
     const [bugs, setBugs] = useState([])
-    const [filterBy, setFilterBy] = useState({ txt: '', minSeverity: 0 })
     const [viewedCount, setViewedCount] = useState(0)
+    const [filterBy, setFilterBy] = useState({ txt: '', minSeverity: 0, pageIdx: 0 })
+    const [hasNextPage, setHasNextPage] = useState(true)
+
 
     useEffect(() => {
         loadBugs()
     }, [filterBy])
 
-useEffect(() => {
-  async function loadViewedCount() {
-    try {
-      const data = await bugService.getCookieCount()
-      console.log('Cookie count:', data)
-      setViewedCount(data.count)
-    } catch (err) {
-      console.error('Failed to load viewed count', err)
-    }
-  }
-  loadViewedCount()
-}, [])
+    useEffect(() => {
+        async function loadViewedCount() {
+            try {
+                const data = await bugService.getCookieCount()
+                console.log('Cookie count:', data)
+                setViewedCount(data.count)
+            } catch (err) {
+                console.error('Failed to load viewed count', err)
+            }
+        }
+        loadViewedCount()
+    }, [])
 
 
 
     async function loadBugs() {
-    try {
-        const bugs = await bugService.query(filterBy)  
-        setBugs(bugs)
-    } catch (err) {
-        showErrorMsg('Cannot load bugs')
+        try {
+            const bugs = await bugService.query(filterBy)
+            setBugs(bugs)
+
+            const nextPageFilter = { ...filterBy, pageIdx: filterBy.pageIdx + 1 }
+            const nextPageBugs = await bugService.query(nextPageFilter)
+            setHasNextPage(nextPageBugs.length > 0)
+        } catch (err) {
+            showErrorMsg('Cannot load bugs')
+        }
     }
-}
+
 
     async function onRemoveBug(bugId) {
         try {
@@ -86,15 +93,14 @@ useEffect(() => {
         }
     }
 
-    function downloadPDF()
-    {
+    function downloadPDF() {
         const doc = new jsPDF()
 
         doc.setFontSize(20)
         doc.text('Bugs Report', 14, 20)
         doc.setFontSize(10)
         doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 30)
-    
+
         const tableData = bugs.map(bug => [
             bug.title,
             bug.severity || 'N/A',
@@ -111,7 +117,21 @@ useEffect(() => {
         })
 
         doc.save('bugs-report.pdf')
-}
+    }
+
+    function onChangePage(diff) {
+        setFilterBy(prev => {
+            const newPage = prev.pageIdx + diff
+
+            if (newPage < 0) return prev
+
+            if (diff > 0 && !hasNextPage) return prev
+
+            return { ...prev, pageIdx: newPage }
+        })
+    }
+
+
 
     return (
         <section>
@@ -122,6 +142,12 @@ useEffect(() => {
                 <p>Viewed {viewedCount} / 3 bugs</p>
                 <BugFilter filterBy={filterBy} onSetFilter={setFilterBy} />
                 <BugList bugs={bugs} onRemoveBug={onRemoveBug} onEditBug={onEditBug} />
+                <div className="paging">
+                    <button onClick={() => onChangePage(-1)} disabled={filterBy.pageIdx === 0}>⬅ Prev</button>
+                    <span> Page {filterBy.pageIdx + 1} </span>
+                    <button onClick={() => onChangePage(1)} disabled={!hasNextPage}>Next ➡</button>
+                </div>
+
             </main>
         </section>
     )
