@@ -12,17 +12,11 @@ export function BugIndex() {
     const [bugs, setBugs] = useState([])
     const [filterBy, setFilterBy] = useState({ txt: '', minSeverity: 0 })
     const [viewedCount, setViewedCount] = useState(0)
-    const [viewedBugs, setViewedBugs] = useState(0)
-    const maxViews = 3
 
     useEffect(() => {
         loadBugs()
     }, [filterBy])
 
-    useEffect(() => {
-        loadCount()
-    }, [])
-    
 useEffect(() => {
   async function loadViewedCount() {
     try {
@@ -39,13 +33,13 @@ useEffect(() => {
 
 
     async function loadBugs() {
-        const allBugs = await bugService.query()
-        const filteredBugs = allBugs.filter(bug =>
-            bug.title.toLowerCase().includes(filterBy.txt.toLowerCase()) &&
-            bug.severity >= +filterBy.minSeverity
-        )
-        setBugs(filteredBugs)
+    try {
+        const bugs = await bugService.query(filterBy)  
+        setBugs(bugs)
+    } catch (err) {
+        showErrorMsg('Cannot load bugs')
     }
+}
 
     async function onRemoveBug(bugId) {
         try {
@@ -89,16 +83,6 @@ useEffect(() => {
         } catch (err) {
             console.log('Error from onEditBug ->', err)
             showErrorMsg('Cannot update bug')
-        }
-    }
-
-    async function loadCount() {
-        try {
-            const data = await bugService.getCookieCount()
-            console.log('Cookie count response:', data)
-            setViewedBugs(data.count)
-        } catch (err) {
-            console.log('Failed to load cookie count', err)
         }
     }
 

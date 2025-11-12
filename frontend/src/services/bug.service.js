@@ -8,8 +8,20 @@ export const bugService = {
   getCookieCount,
 }
 
-async function query() {
-  const res = await fetch(BASE_URL, {
+async function query(filterBy = {}) {
+  const queryParams = new URLSearchParams()
+  
+  if (filterBy.txt) queryParams.set('txt', filterBy.txt)
+  if (filterBy.minSeverity) queryParams.set('minSeverity', filterBy.minSeverity)
+  if (filterBy.labels && filterBy.labels.length) queryParams.set('labels', filterBy.labels.join(','))
+  if (filterBy.sortBy) queryParams.set('sortBy', filterBy.sortBy)
+  if (filterBy.sortDir) queryParams.set('sortDir', filterBy.sortDir)
+  if (filterBy.pageIdx !== undefined) queryParams.set('pageIdx', filterBy.pageIdx)
+  
+  const queryString = queryParams.toString()
+  const url = queryString ? `${BASE_URL}?${queryString}` : BASE_URL
+  
+  const res = await fetch(url, {
     credentials: 'include', 
   })
   return res.json()
@@ -19,6 +31,10 @@ async function getById(bugId) {
   const res = await fetch(BASE_URL + bugId, {
     credentials: 'include', 
   })
+  if (!res.ok) {
+    const errText = await res.text()
+    throw new Error(errText)
+  }
   return res.json()
 }
 

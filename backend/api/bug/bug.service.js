@@ -1,7 +1,7 @@
 import fs from 'fs'
 import { makeId, readJsonFile } from '../../services/util.service.js'
 
-let bugs = readJsonFile('./data/bugs.json') // נטען פעם אחת
+let bugs = readJsonFile('./data/bugs.json') 
 
 export const bugService = {
   query,
@@ -12,6 +12,40 @@ export const bugService = {
 
 async function query(filterBy) {
   let bugsToDisplay = [...bugs]
+  
+  if (filterBy.txt) {
+    const regex = new RegExp(filterBy.txt, 'i')
+    bugsToDisplay = bugsToDisplay.filter(bug => 
+      regex.test(bug.title) || regex.test(bug.description)
+    )
+  }
+  
+  if (filterBy.minSeverity) {
+    bugsToDisplay = bugsToDisplay.filter(bug => 
+      bug.severity >= filterBy.minSeverity
+    )
+  }
+  
+  if (filterBy.labels && filterBy.labels.length > 0) {
+    bugsToDisplay = bugsToDisplay.filter(bug =>
+      bug.labels && bug.labels.some(label => 
+        filterBy.labels.includes(label)
+      )
+    )
+  }
+  
+  if (filterBy.sortBy) {
+    bugsToDisplay.sort((a, b) => {
+      if (a[filterBy.sortBy] < b[filterBy.sortBy]) return -1 * filterBy.sortDir
+      if (a[filterBy.sortBy] > b[filterBy.sortBy]) return 1 * filterBy.sortDir
+      return 0
+    })
+  }
+  
+  const PAGE_SIZE = 5
+  const startIdx = filterBy.pageIdx * PAGE_SIZE
+  bugsToDisplay = bugsToDisplay.slice(startIdx, startIdx + PAGE_SIZE)
+  
   return bugsToDisplay
 }
 

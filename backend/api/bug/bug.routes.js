@@ -5,11 +5,12 @@ import { getBugs, getBug, removeBug, updateBug, addBug, getCount } from './bug.c
 const router = express.Router()
 
 router.get('/', getBugs)
+router.get('/count', getCount)
 router.get('/:bugId', getBug)
 router.delete('/:bugId', removeBug)
 router.put('/:bugId', updateBug)
 router.post('/', addBug)
-router.get('/count', getCount)
+
 
 
 export const bugRoutes = router

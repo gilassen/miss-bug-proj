@@ -38,7 +38,9 @@ export async function getBug(req, res) {
       visitedBugs.push(bugId)
     }
 
-    res.cookie('visitedBugs', JSON.stringify(visitedBugs), { maxAge: 1000 * 60 * 60 })
+    console.log('User visited at the following bugs:', visitedBugs)
+    
+    res.cookie('visitedBugs', JSON.stringify(visitedBugs), { maxAge: 7000 })
 
     res.json({ bug, viewedCount: visitedBugs.length })
   } catch (err) {

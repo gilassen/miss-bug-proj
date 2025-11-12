@@ -16,15 +16,18 @@ export function BugDetails() {
         loadBug()
     }, [])
 
-    async function loadBug() {
-        try {
-            const bug = await bugService.getById(bugId)
-            setBug(bug)
-        } catch (err) {
+async function loadBug() {
+    try {
+        const data = await bugService.getById(bugId)
+        setBug(data.bug)  
+    } catch (err) {
+        if (err.message && err.message.includes('Cannot view more than 3 bugs')) {
+            showErrorMsg('Wait for a bit - you viewed 3 bugs already!')
+        } else {
             showErrorMsg('Cannot load bug')
-
         }
     }
+}
 
     if (!bug) return <h1>loadings....</h1>
     return <div className="bug-details main-layout">
