@@ -4,8 +4,6 @@ import { BugList } from '../cmps/BugList.jsx'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { BugFilter } from '../cmps/BugFilter.jsx'
-import { jsPDF } from 'jspdf'
-import autoTable from 'jspdf-autotable'
 
 
 export function BugIndex() {
@@ -93,31 +91,20 @@ export function BugIndex() {
         }
     }
 
-    function downloadPDF() {
-        const doc = new jsPDF()
-
-        doc.setFontSize(20)
-        doc.text('Bugs Report', 14, 20)
-        doc.setFontSize(10)
-        doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 30)
-
-        const tableData = bugs.map(bug => [
-            bug.title,
-            bug.severity || 'N/A',
-            bug.description || 'No description',
-            new Date(bug.createdAt).toLocaleDateString()
-        ])
-
-        autoTable(doc, {
-            head: [['Title', 'Severity', 'Description', 'Created']],
-            body: tableData,
-            startY: 40,
-            styles: { fontSize: 10 },
-            headStyles: { fillColor: [100, 100, 100] }
-        })
-
-        doc.save('bugs-report.pdf')
+    async function downloadPDF() {
+        try {
+            const res = await fetch('/api/bug/pdf')
+            const blob = await res.blob()
+            const url = window.URL.createObjectURL(blob)
+            const link = document.createElement('a')
+            link.href = url
+            link.download = 'bugs-report.pdf'
+            link.click()
+        } catch (err) {
+            showErrorMsg('Cannot download PDF')
+        }
     }
+
 
     function onChangePage(diff) {
         setFilterBy(prev => {
