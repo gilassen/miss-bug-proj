@@ -2,18 +2,19 @@ import fs from 'fs'
 import { makeId, readJsonFile } from '../../services/util.service.js'
 import { loggerService } from '../../services/logger.service.js'
 
-let users = readJsonFile('./data/users.json') // נטען פעם אחת לזיכרון
+let users = readJsonFile('./data/users.json') 
 
 export const userService = {
   query,
   getById,
   remove,
-  save
+  save,
+  getByUsername  
 }
 
 async function query() {
   try {
-    return [...users] // מחזיר עותק, לא רפרנס
+    return [...users] 
   } catch (err) {
     loggerService.error('Cannot get users', err)
     throw err
@@ -27,6 +28,16 @@ async function getById(userId) {
     return user
   } catch (err) {
     loggerService.error('Cannot get user', err)
+    throw err
+  }
+}
+
+async function getByUsername(username) {
+  try {
+    const user = users.find(user => user.username === username)
+    return user
+  } catch (err) {
+    loggerService.error('Cannot find user by username', err)
     throw err
   }
 }

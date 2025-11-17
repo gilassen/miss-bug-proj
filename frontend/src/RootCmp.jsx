@@ -1,6 +1,7 @@
 
 import { AppHeader } from './cmps/AppHeader.jsx'
 import { AppFooter } from './cmps/AppFooter.jsx'
+import { AdminPage } from './cmps/AdminPage.jsx'
 import { Home } from './pages/Home.jsx'
 import { BugIndex } from './pages/BugIndex.jsx'
 import { BugDetails } from './pages/BugDetails.jsx'
@@ -21,6 +22,7 @@ export function App() {
                     <Route path='/about' element={<AboutUs />} />
                     <Route path="/user" element={<UserIndex />} />
                     <Route path="/user/:userId" element={<UserDetails />} />
+                    <Route path="/admin" element={<AdminPage />} />
                 </Routes>
             </main>
             <AppFooter />

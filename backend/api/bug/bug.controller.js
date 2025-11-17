@@ -57,29 +57,66 @@ export async function getBug(req, res) {
 
 export async function removeBug(req, res) {
   const { bugId } = req.params
+  const loggedinUser = req.loggedinUser 
+
   try {
+    const bug = await bugService.getById(bugId)
+
+    if (!loggedinUser.isAdmin && bug.creator._id !== loggedinUser._id) {
+      return res.status(403).send('Not authorized to delete this bug')
+    }
+
     await bugService.remove(bugId)
-    res.send('Bug deleted')
+    res.send('Bug deleted successfully')
   } catch (err) {
     loggerService.error('Cannot remove bug', err)
     res.status(400).send('Cannot remove bug')
   }
 }
 
+
 export async function updateBug(req, res) {
   const bugToSave = req.body
+  const loggedinUser = req.loggedinUser
+
   try {
-    const savedBug = await bugService.save(bugToSave)
+    const existingBug = await bugService.getById(bugToSave._id)
+
+    if (!loggedinUser.isAdmin && existingBug.creator._id !== loggedinUser._id) {
+      return res.status(403).send('Not authorized to update this bug')
+    }
+
+    const updatableFields = ['title', 'description', 'severity', 'labels']
+    const cleanBugToSave = {}
+
+    updatableFields.forEach(field => {
+      if (bugToSave[field] !== undefined) cleanBugToSave[field] = bugToSave[field]
+    })
+
+    cleanBugToSave._id = bugToSave._id
+    cleanBugToSave.creator = existingBug.creator 
+    cleanBugToSave.createdAt = existingBug.createdAt
+
+    const savedBug = await bugService.save(cleanBugToSave)
     res.send(savedBug)
+
   } catch (err) {
     loggerService.error('Cannot update bug', err)
     res.status(400).send('Cannot update bug')
   }
 }
 
+
 export async function addBug(req, res) {
-  const bugToSave = req.body
   try {
+    const bugToSave = req.body
+    const loggedinUser = req.loggedinUser 
+
+    bugToSave.creator = {
+      _id: loggedinUser._id,
+      fullname: loggedinUser.fullname
+    }
+
     const savedBug = await bugService.save(bugToSave)
     res.send(savedBug)
   } catch (err) {
@@ -87,6 +124,7 @@ export async function addBug(req, res) {
     res.status(400).send('Cannot add bug')
   }
 }
+
 
 export function getCount(req, res) {
   try {
