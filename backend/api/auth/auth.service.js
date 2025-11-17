@@ -31,29 +31,37 @@ function validateToken(token) {
 }
 
 async function login(username, password) {
-    let user = await userService.getByUsername(username)
+    const user = await userService.getByUsername(username)
     if (!user) throw 'Unkown username'
 
-    // בקורס זה היה ממומש עם bcrypt, אצלך אפשר להשאיר ככה לכרגע:
-    // const match = await bcrypt.compare(password, user.password)
-    // if (!match) throw 'Invalid username or password'
+
 
     const miniUser = {
         _id: user._id,
         fullname: user.fullname,
+        score: user.score || 0,
         isAdmin: user.isAdmin,
     }
+
     return miniUser
 }
 
 async function signup({ username, password, fullname }) {
     const saltRounds = 10
 
-    if (!username || !password || !fullname) throw 'Missing required signup information'
+    if (!username || !password || !fullname)
+        throw 'Missing required signup information'
 
     const userExist = await userService.getByUsername(username)
     if (userExist) throw 'Username already taken'
 
     const hash = await bcrypt.hash(password, saltRounds)
-    return userService.save({ username, password: hash, fullname, isAdmin: false })
+
+    return userService.save({
+        username,
+        password: hash,
+        fullname,
+        score: 0,
+        isAdmin: false
+    })
 }
