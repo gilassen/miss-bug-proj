@@ -44,8 +44,15 @@ async function getByUsername(username) {
 
 async function remove(userId) {
   try {
+    const bugs = readJsonFile('./data/bugs.json')
+    const userHasBugs = bugs.some(bug => bug.creator && bug.creator._id === userId)
+    
+    if (userHasBugs) {
+      throw new Error('Cannot delete user with existing bugs')
+    }
+
     const idx = users.findIndex(user => user._id === userId)
-    if (idx === -1) throw `Couldn't remove user with _id ${userId}`
+    if (idx === -1) throw new Error(`Couldn't remove user with _id ${userId}`)
     users.splice(idx, 1)
     await _saveUsersToFile()
   } catch (err) {
