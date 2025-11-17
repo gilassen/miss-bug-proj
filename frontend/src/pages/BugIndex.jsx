@@ -93,7 +93,8 @@ export function BugIndex() {
 
     async function downloadPDF() {
         try {
-            const res = await fetch('/api/bug/pdf')
+            const res = await fetch('/api/bug/pdf', {
+            credentials: 'include'  })
             const blob = await res.blob()
             const url = window.URL.createObjectURL(blob)
             const link = document.createElement('a')

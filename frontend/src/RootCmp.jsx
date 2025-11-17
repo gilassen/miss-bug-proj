@@ -22,6 +22,7 @@ export function App() {
                     <Route path='/about' element={<AboutUs />} />
                     <Route path="/user" element={<UserIndex />} />
                     <Route path="/user/:userId" element={<UserDetails />} />
+                    <Route path="/profile" element={<UserDetails />} />
                     <Route path="/admin" element={<AdminPage />} />
                 </Routes>
             </main>

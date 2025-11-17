@@ -6,6 +6,7 @@ export const bugService = {
   remove,
   save,
   getCookieCount,
+  getAll 
 }
 
 async function query(filterBy = {}) {
@@ -75,5 +76,13 @@ async function getCookieCount() {
     console.error('Cannot get cookie count:', err)
     throw err
   }
+}
+
+async function getAll() {
+  const res = await fetch(BASE_URL + 'all', {
+    credentials: 'include',
+  })
+  if (!res.ok) throw new Error('Failed to load all bugs')
+  return res.json()
 }
 

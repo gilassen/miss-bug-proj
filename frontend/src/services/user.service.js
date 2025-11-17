@@ -19,7 +19,7 @@ export const userService = {
     logout,
     signup,
     getLoggedinUser,
-
+    save,
     query,
     getById,
     remove,
@@ -44,7 +44,7 @@ async function remove(userId) {
 }
 
 async function update(userToUpdate) {
-    const { data: updatedUser } = await axios.put(BASE_USER_URL, userToUpdate)
+    const { data: updatedUser } = await axios.put(BASE_USER_URL + userToUpdate._id, userToUpdate)
     if (getLoggedinUser()?._id === updatedUser._id) {
         _setLoggedinUser(updatedUser)
     }
@@ -87,4 +87,13 @@ function _setLoggedinUser(user) {
     }
     sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))
     return user
+}
+
+async function save(userToSave) {
+    if (userToSave._id) {
+        return await update(userToSave)
+    } else {
+        const { data } = await axios.post(BASE_USER_URL, userToSave)
+        return data
+    }
 }

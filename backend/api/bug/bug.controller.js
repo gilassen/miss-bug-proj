@@ -187,3 +187,8 @@ export async function getBugsPDF(req, res) {
     res.status(500).send('Failed to generate PDF')
   }
 }
+
+export async function getAllBugs(req, res) {
+   const bugs = await bugService.getAll()
+   res.send(bugs)
+}

@@ -7,7 +7,8 @@ export const bugService = {
   query,
   getById,
   remove,
-  save
+  save,
+  getAll
 }
 
 async function query(filterBy) {
@@ -86,5 +87,12 @@ function _saveBugsToFile() {
     })
   })
 }
+
+function getAll() {
+   return bugs
+}
+
+
+
 
 
