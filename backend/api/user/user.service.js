@@ -24,7 +24,7 @@ async function query() {
 async function getById(userId) {
   try {
     const user = users.find(user => user._id === userId)
-    if (!user) throw `Couldn't find user with _id ${userId}`
+    if (!user) throw new Error(`Couldn't find user with _id ${userId}`)
     return user
   } catch (err) {
     loggerService.error('Cannot get user', err)
@@ -44,7 +44,8 @@ async function getByUsername(username) {
 
 async function remove(userId) {
   try {
-    const bugs = readJsonFile('./data/bugs.json')
+    const { bugService } = await import('../bug/bug.service.js')
+    const bugs = await bugService.getAll()
     const userHasBugs = bugs.some(bug => bug.creator && bug.creator._id === userId)
     
     if (userHasBugs) {
@@ -65,7 +66,7 @@ async function save(userToSave) {
   try {
     if (userToSave._id) {
       const idx = users.findIndex(user => user._id === userToSave._id)
-      if (idx === -1) throw `Couldn't update user with _id ${userToSave._id}`
+      if (idx === -1) throw new Error(`Couldn't update user with _id ${userToSave._id}`)
       users[idx] = { ...users[idx], ...userToSave }
     } else {
       userToSave._id = makeId()

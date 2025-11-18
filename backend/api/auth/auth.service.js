@@ -51,10 +51,25 @@ async function signup({ username, password, fullname }) {
     const saltRounds = 10
 
     if (!username || !password || !fullname)
-        throw 'Missing required signup information'
+        throw new Error('Missing required signup information')
+
+    // Validate username
+    if (username.length < 3 || username.length > 20)
+        throw new Error('Username must be between 3 and 20 characters')
+    
+    if (!/^[a-zA-Z0-9_]+$/.test(username))
+        throw new Error('Username can only contain letters, numbers, and underscores')
+
+    // Validate password
+    if (password.length < 6)
+        throw new Error('Password must be at least 6 characters')
+
+    // Validate fullname
+    if (fullname.length < 2 || fullname.length > 50)
+        throw new Error('Full name must be between 2 and 50 characters')
 
     const userExist = await userService.getByUsername(username)
-    if (userExist) throw 'Username already taken'
+    if (userExist) throw new Error('Username already taken')
 
     const hash = await bcrypt.hash(password, saltRounds)
 

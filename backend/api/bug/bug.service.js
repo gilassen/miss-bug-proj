@@ -52,13 +52,13 @@ async function query(filterBy) {
 
 async function getById(bugId) {
   const bug = bugs.find(bug => bug._id === bugId)
-  if (!bug) throw `Couldn't find bug with _id ${bugId}`
+  if (!bug) throw new Error(`Couldn't find bug with _id ${bugId}`)
   return bug
 }
 
 async function remove(bugId) {
   const idx = bugs.findIndex(bug => bug._id === bugId)
-  if (idx === -1) throw `Couldn't remove bug with _id ${bugId}`
+  if (idx === -1) throw new Error(`Couldn't remove bug with _id ${bugId}`)
   bugs.splice(idx, 1)
   await _saveBugsToFile()
 }
@@ -66,7 +66,7 @@ async function remove(bugId) {
 async function save(bugToSave) {
   if (bugToSave._id) {
     const idx = bugs.findIndex(bug => bug._id === bugToSave._id)
-    if (idx === -1) throw `Couldn't update bug with _id ${bugToSave._id}`
+    if (idx === -1) throw new Error(`Couldn't update bug with _id ${bugToSave._id}`)
     bugs[idx] = { ...bugs[idx], ...bugToSave }
   } else {
     bugToSave._id = makeId()
@@ -91,8 +91,3 @@ function _saveBugsToFile() {
 function getAll() {
    return bugs
 }
-
-
-
-
-
